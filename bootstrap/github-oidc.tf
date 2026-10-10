@@ -1,7 +1,10 @@
 # GitHub Actions -> AWS without stored keys: GitHub signs a short-lived OIDC token,
 # AWS checks it against this provider and the role trust policies below.
 locals {
-  repo = "JHanhivaara/aws-shop-infra"
+  # GitHub's immutable subject format: owner@ownerId/repo@repoId. IDs survive renames, so a
+  # deleted-and-recreated repo with the same name cannot inherit this trust.
+  # Check yours: gh api repos/OWNER/REPO/actions/oidc/customization/sub
+  sub = "repo:JHanhivaara@77466940/aws-shop-infra@1413519432"
 }
 
 resource "aws_iam_openid_connect_provider" "github" {
@@ -25,7 +28,7 @@ data "aws_iam_policy_document" "trust_any_ref" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:${local.repo}:*"]
+      values   = ["${local.sub}:*"]
     }
   }
 }
@@ -46,7 +49,7 @@ data "aws_iam_policy_document" "trust_main_only" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:${local.repo}:ref:refs/heads/main"]
+      values   = ["${local.sub}:ref:refs/heads/main"]
     }
   }
 }
