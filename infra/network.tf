@@ -1,7 +1,6 @@
-# Private network for the shop. No internet gateway: nothing in here is reachable from outside.
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
-  enable_dns_hostnames = true # RDS endpoints are DNS names; Lambda needs to resolve them
+  enable_dns_hostnames = true
   enable_dns_support   = true
 
   tags = { Name = "shop" }
@@ -35,7 +34,6 @@ resource "aws_security_group" "db" {
   vpc_id      = aws_vpc.main.id
 }
 
-# DB side: who may connect IN
 resource "aws_vpc_security_group_ingress_rule" "db_from_lambda" {
   security_group_id            = aws_security_group.db.id
   referenced_security_group_id = aws_security_group.lambda.id
@@ -44,7 +42,6 @@ resource "aws_vpc_security_group_ingress_rule" "db_from_lambda" {
   to_port                      = 5432
 }
 
-# Lambda side: where it may connect OUT
 resource "aws_vpc_security_group_egress_rule" "lambda_to_db" {
   security_group_id            = aws_security_group.lambda.id
   referenced_security_group_id = aws_security_group.db.id
