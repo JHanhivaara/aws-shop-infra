@@ -4,6 +4,15 @@ terraform {
   required_providers {
     aws = { source = "hashicorp/aws", version = "~> 6.0" }
   }
+  # The bucket below stores its own state. First apply ran with local state; once the
+  # bucket existed the state moved here, so no laptop holds the only copy.
+  backend "s3" {
+    bucket       = "tfstate-070443470685-eu-north-1"
+    key          = "bootstrap/terraform.tfstate"
+    region       = "eu-north-1"
+    profile      = "aws-learning"
+    use_lockfile = true
+  }
 }
 
 provider "aws" {
