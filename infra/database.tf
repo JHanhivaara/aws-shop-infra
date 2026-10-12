@@ -1,7 +1,7 @@
 
 variable "create_db" {
   type        = bool
-  default     = false
+  default     = true
   description = "Create the RDS instance. Flip to true for a study session, back to false after."
 }
 
