@@ -12,7 +12,19 @@ app = FastAPI(title="Shop API")
 
 def connect():
     # dict_row: each row comes back as {"id": 1, "name": "Mug", ...}, which FastAPI turns into JSON.
-    return psycopg.connect(DATABASE_URL, row_factory=dict_row)
+    host = os.environ.get("DB_HOST")
+    if host is None:  # local: docker-compose Postgres with a password
+        return psycopg.connect(DATABASE_URL, row_factory=dict_row)
+    if host == "":  # on Lambda while create_db = false
+        raise HTTPException(status_code=503, detail="Database is switched off")
+
+    import boto3  # included in the Lambda runtime; only needed there
+
+    # IAM auth: a 15-minute token signed locally with the Lambda role's credentials, no stored password.
+    token = boto3.client("rds").generate_db_auth_token(DBHostname=host, Port=5432, DBUsername="shop_api")
+    return psycopg.connect(
+        host=host, dbname="shop", user="shop_api", password=token, sslmode="require", row_factory=dict_row
+    )
 
 
 @app.get("/products")
