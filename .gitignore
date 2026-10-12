@@ -12,3 +12,4 @@ tfplan
 # Python
 .venv/
 __pycache__/
+build/
