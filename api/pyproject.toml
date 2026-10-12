@@ -1,8 +1,7 @@
 [project]
 name = "shop"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "Shop API: FastAPI on AWS Lambda with RDS Postgres"
 authors = [
     { name = "Juuso Hanhivaara", email = "77466940+JHanhivaara@users.noreply.github.com" }
 ]
@@ -12,9 +11,6 @@ dependencies = [
     "mangum>=0.22.0",
     "psycopg[binary]>=3.3.6",
 ]
-
-[project.scripts]
-shop = "shop:main"
 
 [build-system]
 requires = ["uv_build>=0.13.0,<0.14.0"]
