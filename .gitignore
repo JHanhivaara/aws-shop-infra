@@ -8,3 +8,7 @@
 crash.log
 node_modules/
 tfplan
+
+# Python
+.venv/
+__pycache__/
