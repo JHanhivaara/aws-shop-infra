@@ -95,6 +95,9 @@ data "aws_iam_policy_document" "shop_iam" {
       "iam:CreateRole", "iam:DeleteRole", "iam:UpdateRole", "iam:TagRole", "iam:UntagRole",
       "iam:UpdateAssumeRolePolicy", "iam:PutRolePolicy", "iam:DeleteRolePolicy",
       "iam:AttachRolePolicy", "iam:DetachRolePolicy", "iam:PassRole",
+      # Terraform reads every resource back after creating it, and before deleting a role.
+      "iam:GetRole", "iam:GetRolePolicy", "iam:ListRolePolicies", "iam:ListAttachedRolePolicies",
+      "iam:ListInstanceProfilesForRole",
     ]
     resources = ["arn:aws:iam::${data.aws_caller_identity.me.account_id}:role/shop-*"]
   }
